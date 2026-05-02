@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { LoginForm } from "@/components/login-form"
 
 export const metadata = {
@@ -19,7 +20,9 @@ export default function LoginPage() {
       />
 
       <div className="relative z-10 w-full max-w-sm md:max-w-4xl">
-        <LoginForm />
+        <Suspense fallback={<div>Loading...</div>}>
+          <LoginForm />
+        </Suspense>
       </div>
     </main>
   )

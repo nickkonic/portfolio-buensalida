@@ -3,6 +3,7 @@ import { Header } from "@/app/features/home/components/header";
 import { HomeFeature } from "@/app/features/home/page";
 import { WebProjects } from "@/app/features/home/components/web-projects";
 import { LatestBlog } from "@/app/features/home/components/latest-blog";
+import { Footer } from "@/app/features/home/components/footer";
 
 export const metadata = {
   title: "Karl Nestor Buensalida — Portfolio",
@@ -34,6 +35,9 @@ export default function HomePage() {
 
       {/* Latest Blog */}
       <LatestBlog />
+
+      {/* Footer */}
+      <Footer />
     </main>
   );
 }

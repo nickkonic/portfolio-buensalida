@@ -42,3 +42,5 @@ export function HomeFeature() {
         </section>
     );
 }
+
+export default HomeFeature;
