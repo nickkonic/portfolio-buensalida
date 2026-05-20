@@ -26,6 +26,14 @@ import {
   Settings2,
 } from "lucide-react";
 
+const DEFAULT_SKILL_CATEGORIES = [
+  "Programming Languages",
+  "Backend Development",
+  "Frontend Development",
+  "Databases & Dev Tools",
+  "DevOps & Tools",
+];
+
 const Github = ({ className }: { className?: string }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -110,6 +118,9 @@ export function EditProfileForm({ profile, onBack, onSuccess }: EditProfileFormP
     order: number;
     uploading?: boolean;
   }[]>([]);
+  const [skillCategories, setSkillCategories] = useState<string[]>(DEFAULT_SKILL_CATEGORIES);
+  const [newSkillCategory, setNewSkillCategory] = useState("");
+  const [selectedCategoryForNewSkill, setSelectedCategoryForNewSkill] = useState(DEFAULT_SKILL_CATEGORIES[0]);
 
   const [activeTab, setActiveTab] = useState("general");
   const [showPreviewOnMobile, setShowPreviewOnMobile] = useState(false);
@@ -170,6 +181,15 @@ export function EditProfileForm({ profile, onBack, onSuccess }: EditProfileFormP
       }
 
       if (profile.technicalSkills) {
+        const existingCategories = profile.technicalSkills
+          .map((sk) => (sk.category || "").trim())
+          .filter(Boolean);
+
+        setSkillCategories(
+          Array.from(new Set([...DEFAULT_SKILL_CATEGORIES, ...existingCategories]))
+        );
+        setSelectedCategoryForNewSkill(existingCategories[0] || DEFAULT_SKILL_CATEGORIES[0]);
+
         setTechnicalSkills(
           profile.technicalSkills.map((sk) => ({
             name: sk.name || "",
@@ -272,6 +292,25 @@ export function EditProfileForm({ profile, onBack, onSuccess }: EditProfileFormP
   };
 
   // Technical Skills Operations
+  const addSkillCategory = () => {
+    const normalized = newSkillCategory.trim();
+    if (!normalized) return;
+
+    const exists = skillCategories.some(
+      (category) => category.toLowerCase() === normalized.toLowerCase()
+    );
+
+    if (exists) {
+      toast.info("Category already exists");
+      return;
+    }
+
+    setSkillCategories((prev) => [...prev, normalized]);
+    setSelectedCategoryForNewSkill(normalized);
+    setNewSkillCategory("");
+    toast.success("Category added");
+  };
+
   const addTechnicalSkill = () => {
     setTechnicalSkills([
       ...technicalSkills,
@@ -279,7 +318,7 @@ export function EditProfileForm({ profile, onBack, onSuccess }: EditProfileFormP
         name: "",
         url: "",
         link: "",
-        category: "Programming Languages",
+        category: selectedCategoryForNewSkill || skillCategories[0] || "General",
         order: technicalSkills.length,
       },
     ]);
@@ -581,11 +620,54 @@ export function EditProfileForm({ profile, onBack, onSuccess }: EditProfileFormP
                   </div>
 
                   <div className="pt-4 border-t border-border/40">
-                    <div className="flex items-center justify-between mb-4">
-                      <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Skills Bar</Label>
-                      <Button type="button" variant="outline" size="sm" onClick={addTechnicalSkill} className="h-7 text-[10px] rounded-lg gap-1 border-indigo-500/30 text-indigo-400">
+                    <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Skills Bar</Label>
+                    <p className="mt-1 mb-3 text-[10px] text-muted-foreground">Step 1: Add category if needed. Step 2: Choose a category and click New Skill.</p>
+                    <div className="mb-3 flex items-center gap-2">
+                      <Input
+                        value={newSkillCategory}
+                        onChange={(e) => setNewSkillCategory(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addSkillCategory();
+                          }
+                        }}
+                        className="h-8 text-[10px]"
+                        placeholder="Add new category (e.g. Mobile Development)"
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={addSkillCategory}
+                        className="h-8 text-[10px] rounded-lg"
+                      >
+                        Add Category
+                      </Button>
+                    </div>
+                    <div className="mb-3 flex items-center gap-2">
+                      <select
+                        value={selectedCategoryForNewSkill}
+                        onChange={(e) => setSelectedCategoryForNewSkill(e.target.value)}
+                        className="h-8 flex-1 rounded-md border border-input bg-background px-2 text-[10px]"
+                      >
+                        {skillCategories.map((category) => (
+                          <option key={category} value={category}>{category}</option>
+                        ))}
+                      </select>
+                      <Button type="button" variant="outline" size="sm" onClick={addTechnicalSkill} className="h-8 text-[10px] rounded-lg gap-1 border-indigo-500/30 text-indigo-400">
                         <Plus className="h-3 w-3" /> NEW SKILL
                       </Button>
+                    </div>
+                    <div className="mb-3 flex flex-wrap gap-1">
+                      {skillCategories.map((category) => (
+                        <span
+                          key={category}
+                          className="rounded-full border border-border/60 px-2 py-0.5 text-[9px] text-muted-foreground"
+                        >
+                          {category}
+                        </span>
+                      ))}
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       {technicalSkills.map((sk, i) => (
@@ -601,11 +683,14 @@ export function EditProfileForm({ profile, onBack, onSuccess }: EditProfileFormP
                           </div>
                           <div className="flex-1 min-w-0">
                             <Input value={sk.name} onChange={(e) => updateTechnicalSkill(i, "name", e.target.value)} className="h-5 text-[10px] font-bold bg-transparent border-none p-0 focus-visible:ring-0" placeholder="Name" />
-                            <select value={sk.category} onChange={(e) => updateTechnicalSkill(i, "category", e.target.value)} className="text-[8px] bg-transparent border-none p-0 focus:ring-0 text-muted-foreground w-full appearance-none">
-                              <option value="Programming Languages">Languages</option>
-                              <option value="Backend Development">Backend</option>
-                              <option value="Frontend Development">Frontend</option>
-                              <option value="Databases & Dev Tools">Data/Ops</option>
+                            <select
+                              value={sk.category}
+                              onChange={(e) => updateTechnicalSkill(i, "category", e.target.value)}
+                              className="h-6 w-full rounded border border-input/40 bg-background/60 px-1 text-[9px]"
+                            >
+                              {skillCategories.map((category) => (
+                                <option key={category} value={category}>{category}</option>
+                              ))}
                             </select>
                           </div>
                         </div>

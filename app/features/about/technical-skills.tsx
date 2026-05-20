@@ -16,14 +16,28 @@ interface TechnicalSkillsProps {
 }
 
 export function TechnicalSkills({ skills }: TechnicalSkillsProps) {
-  const hasSkills = skills && skills.length > 0;
+  const resolvedSkills = skills ?? [];
+  const hasSkills = resolvedSkills.length > 0;
 
-  const CATEGORIES = [
+  const PREFERRED_CATEGORIES = [
     "Programming Languages",
     "Backend Development",
     "Frontend Development",
     "Databases & Dev Tools",
     "DevOps & Tools",
+  ];
+
+  const dynamicCategories = Array.from(
+    new Set(
+      resolvedSkills
+        .map((s) => (s.category || "").trim())
+        .filter((category) => category.length > 0)
+    )
+  );
+
+  const categories = [
+    ...PREFERRED_CATEGORIES.filter((category) => dynamicCategories.includes(category)),
+    ...dynamicCategories.filter((category) => !PREFERRED_CATEGORIES.includes(category)),
   ];
 
   if (!hasSkills) {
@@ -100,8 +114,8 @@ export function TechnicalSkills({ skills }: TechnicalSkillsProps) {
       <h2 className="mb-10 text-3xl font-bold tracking-tight md:text-4xl">Technical skills</h2>
       
       <div className="flex flex-col gap-12">
-        {CATEGORIES.map((category) => {
-          const categorySkills = skills.filter((s) => s.category === category);
+        {categories.map((category) => {
+          const categorySkills = resolvedSkills.filter((s) => s.category === category);
           if (categorySkills.length === 0) return null;
 
           const skillNames = categorySkills.map((s) => s.name).join(", ");
@@ -111,9 +125,9 @@ export function TechnicalSkills({ skills }: TechnicalSkillsProps) {
               <h3 className="mb-2 text-xl font-bold">{category}</h3>
               <p className="mb-6 text-sm text-muted-foreground">Proficient in {skillNames}</p>
               <div className="flex flex-wrap gap-4">
-                {categorySkills.map((skill) => (
+                {categorySkills.map((skill, index) => (
                   <SkillIcon 
-                    key={skill.id || skill.name}
+                    key={`${skill.id || "no-id"}-${skill.name || "unnamed"}-${index}`}
                     name={skill.name} 
                     url={skill.url} 
                     link={skill.link}
