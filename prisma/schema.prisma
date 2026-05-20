@@ -46,3 +46,67 @@ model Session {
 
   @@map("admin_sessions")
 }
+
+model About {
+  id              String           @id @default(cuid())
+  name            String
+  title           String
+  avatarUrl       String?          @map("avatar_url")
+  timezone        String           @default("Asia/Manila")
+  scheduleCallUrl String?          @map("schedule_call_url")
+  githubUrl       String?          @map("github_url")
+  linkedinUrl     String?          @map("linkedin_url")
+  email           String?
+  bio             String
+  isActive        Boolean          @default(false) @map("is_active")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  workExperiences WorkExperience[]
+  studies         Study[]
+  technicalSkills TechnicalSkill[]
+
+  @@map("about_profiles")
+}
+
+model WorkExperience {
+  id        String   @id @default(cuid())
+  aboutId   String   @map("about_id")
+  company   String
+  role      String
+  date      String
+  bullets   String[]
+  order     Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  about     About    @relation(fields: [aboutId], references: [id], onDelete: Cascade)
+
+  @@map("about_work_experiences")
+}
+
+model Study {
+  id        String   @id @default(cuid())
+  aboutId   String   @map("about_id")
+  school    String
+  degree    String
+  order     Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  about     About    @relation(fields: [aboutId], references: [id], onDelete: Cascade)
+
+  @@map("about_studies")
+}
+
+model TechnicalSkill {
+  id        String   @id @default(cuid())
+  aboutId   String   @map("about_id")
+  name      String
+  url       String
+  link      String?
+  category  String
+  order     Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  about     About    @relation(fields: [aboutId], references: [id], onDelete: Cascade)
+
+  @@map("about_technical_skills")
+}

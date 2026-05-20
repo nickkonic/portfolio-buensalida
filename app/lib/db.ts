@@ -18,9 +18,10 @@ declare global {
 function createPool(): Pool {
   return new Pool({
     connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
     max: 10,             // max connections in the pool
     idleTimeoutMillis: 30_000,
-    connectionTimeoutMillis: 2_000,
+    connectionTimeoutMillis: 10_000,
   });
 }
 

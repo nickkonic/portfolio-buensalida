@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { query } from "@/app/lib/db";
-import { verifyPassword } from "@/app/api/auth/login";
+import { verifyPassword } from "@/app/lib/auth/password";
 import {
   generateSessionToken,
   setSessionCookie,
   SESSION_DURATION_MS,
-} from "@/app/api/auth/session";
+} from "@/app/lib/auth/session";
 
 const loginSchema = z.object({
   email: z.string().email(),

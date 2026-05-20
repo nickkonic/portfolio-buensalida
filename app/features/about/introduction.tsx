@@ -1,4 +1,4 @@
-import { Calendar, Mail, ChevronRight } from "lucide-react";
+import { Mail } from "lucide-react";
 import Link from "next/link";
 
 const GithubIcon = ({ className }: { className?: string }) => (
@@ -33,41 +33,76 @@ const LinkedinIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-export function Introduction() {
+interface IntroductionProps {
+    name: string;
+    title: string;
+    bio: string;
+    githubUrl?: string;
+    linkedinUrl?: string;
+    email?: string;
+}
+
+export function Introduction({
+    name,
+    title,
+    bio,
+    githubUrl,
+    linkedinUrl,
+    email,
+}: IntroductionProps) {
+    const formattedName = name.includes(" ") ? (
+        <>
+            {name.substring(0, name.lastIndexOf(" "))}
+            <br />
+            {name.substring(name.lastIndexOf(" ") + 1)}
+        </>
+    ) : name;
+
     return (
         <section id="introduction" className="scroll-mt-32">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-1.5 text-sm font-medium text-blue-400 backdrop-blur-sm transition-colors hover:bg-blue-500/20 cursor-pointer">
-                <Calendar className="h-4 w-4" />
-                Schedule a call
-                <div className="ml-2 flex h-5 w-5 items-center justify-center rounded-full bg-background/20 text-foreground">
-                    <ChevronRight className="h-3 w-3" />
-                </div>
-            </div>
-
             <h1 className="mb-2 text-5xl font-bold tracking-tight md:text-6xl lg:text-[4.5rem] leading-[1.1]">
-                Karl Nestor<br />Buensalida
+                {formattedName}
             </h1>
             <h2 className="mb-6 text-2xl font-normal text-muted-foreground md:text-3xl">
-                Software Engineer
+                {title}
             </h2>
 
             <div className="mb-8 flex flex-wrap gap-3">
-                <Link href="#" className="flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-foreground/10 hover:text-foreground">
-                    <GithubIcon className="h-4 w-4" />
-                    GitHub
-                </Link>
-                <Link href="#" className="flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-foreground/10 hover:text-foreground">
-                    <LinkedinIcon className="h-4 w-4" />
-                    LinkedIn
-                </Link>
-                <Link href="#" className="flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-foreground/10 hover:text-foreground">
-                    <Mail className="h-4 w-4" />
-                    Email
-                </Link>
+                {githubUrl && (
+                    <Link
+                        href={githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-foreground/10 hover:text-foreground"
+                    >
+                        <GithubIcon className="h-4 w-4" />
+                        GitHub
+                    </Link>
+                )}
+                {linkedinUrl && (
+                    <Link
+                        href={linkedinUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-foreground/10 hover:text-foreground"
+                    >
+                        <LinkedinIcon className="h-4 w-4" />
+                        LinkedIn
+                    </Link>
+                )}
+                {email && (
+                    <Link
+                        href={`mailto:${email}`}
+                        className="flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-foreground/10 hover:text-foreground"
+                    >
+                        <Mail className="h-4 w-4" />
+                        Email
+                    </Link>
+                )}
             </div>
 
-            <p className="max-w-3xl text-base leading-relaxed text-foreground/80 md:text-lg">
-                Aspiring Software Developer with experience in full-stack web development, system design, UI/UX, and QA. Built WordPress sites, contributed to management systems, and handled server maintenance. Proficient in Python, TypeScript, React, Angular, Next.js, Node.js, and MySQL. Active in blockchain and startup tech seminars.
+            <p className="max-w-3xl text-base leading-relaxed text-foreground/80 md:text-lg whitespace-pre-line">
+                {bio}
             </p>
         </section>
     );
