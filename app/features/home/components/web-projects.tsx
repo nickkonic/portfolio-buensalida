@@ -6,7 +6,7 @@ const projects = [
     title: "Supply Management System",
     description:
       "A comprehensive supply management system developed during my internship at Quanby Solution Inc. Features include inventory tracking, order management, and supplier management.",
-    image: "/placeholder-supply.png", // Replace with real image path
+    image: "/supply-management.png",
     tags: ["Angular", "PostgreSQL", "Prisma", "Express"],
     liveUrl: "#",
     codeUrl: "#",
@@ -15,7 +15,7 @@ const projects = [
     title: "Document Management System",
     description:
       "A demo system developed during OJT for efficient document handling and organization. Includes features for document upload, categorization, and search functionality.",
-    image: "/placeholder-document.png", // Replace with real image path
+    image: "/document-management.png",
     tags: ["Angular", "Supabase", "Node.js", "PostgreSQL"],
     liveUrl: "#",
     codeUrl: "#",
